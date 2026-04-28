@@ -1,8 +1,16 @@
-#include #include #include using namespace std;
+#include <iostream>
+#include <cstdio>
+using namespace std;
 
 #define COLS 4
 
-class Emprunt { private: double capital; double tauxAnnuel; int nbMois; double tauxMensuel; double mensualite;
+class Emprunt {
+private:
+    double capital;
+    double tauxAnnuel;
+    int nbMois;
+    double tauxMensuel;
+    double mensualite;
 
 public:
     Emprunt(double cap, int duree, double taux) {
@@ -28,50 +36,57 @@ public:
     }
 };
 
-void separation() { printf("+-----------------"); for (int j = 0; j < COLS; j++) { printf("+--------------------"); } printf("+\n"); }
+void separation() {
+    printf("+-----------------");
+    for (int j = 0; j < COLS; j++) {
+        printf("+--------------------");
+    }
+    printf("+\n");
+}
 
-int main() { double capital; cout << "Capital : "; cin >> capital;
+int main() {
+    double capital;
+    cout << "Capital : ";
+    cin >> capital;
 
-const char* banques[COLS] = {
-    "Banque Populaire",
-    "LCL",
-    "Credit Agricole",
-    "BNP Paribas"
-};
+    const char* banques[COLS] = {
+        "Banque Populaire",
+        "LCL",
+        "Credit Agricole",
+        "BNP Paribas"
+    };
 
-int dure[3] = {10, 15, 20};
-double taux[2] = {3.0, 4.0};
+    int dure[3] = {10, 15, 20};
+    double taux[2] = {3.0, 4.0};
 
-
-separation();
-printf("| %-15s ", "");
-for (int j = 0; j < COLS; j++)
-    printf("| %-18s ", banques[j]);
-printf("|\n");
-separation();
-
-
-for (int t = 0; t < 2; t++) {
-
-    
-    printf("| Taux %d (%.0f%%)   ", t + 1, taux[t]);
+    separation();
+    printf("| %-15s ", "");
     for (int j = 0; j < COLS; j++)
-        printf("| %-18s ", "");
+        printf("| %-18s ", banques[j]);
     printf("|\n");
     separation();
 
-    
-    for (int d = 0; d < 3; d++) {
+    for (int t = 0; t < 2; t++) {
 
-        printf("| %-15d ", dure[d]);
-
-        
-        for (int b = 0; b < COLS; b++) {
-            Emprunt e(capital, dure[d], taux[t]);
-            printf("| %-18.2f ", e.calculerMensualite());
-        }
-
+        printf("| Taux %d (%.0f%%)   ", t + 1, taux[t]);
+        for (int j = 0; j < COLS; j++)
+            printf("| %-18s ", "");
         printf("|\n");
         separation();
+
+        for (int d = 0; d < 3; d++) {
+
+            printf("| %-15d ", dure[d]);
+
+            for (int b = 0; b < COLS; b++) {
+                Emprunt e(capital, dure[d], taux[t]);
+                printf("| %-18.2f ", e.calculerMensualite());
+            }
+
+            printf("|\n");
+            separation();
+        }
     }
+
+    return 0;
 }
