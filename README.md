@@ -39,7 +39,7 @@ Elle permet de :
 * Saisir les données via le clavier
 * Ajouter une banque personnalisée
 
-Classe *SimulationCredit*
+Classe *simulation crédit*
 
 Cette classe est responsable de :
 
