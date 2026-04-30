@@ -1,0 +1,163 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+#define MAX_COLS 5
+
+// ================== Classe Emprunt ==================
+class Emprunt {
+private:
+    double capital;
+    int nbMois;
+    double tauxMensuel;
+
+public:
+    Emprunt(double cap, int dureeAnnees, double tauxAnnuel)
+        : capital(cap),
+          nbMois(dureeAnnees * 12),
+          tauxMensuel((tauxAnnuel / 100.0) / 12.0) {}
+
+    double mensualite() const {
+        double facteur = 1.0;
+        for (int i = 0; i < nbMois; i++)
+            facteur *= (1 + tauxMensuel);
+
+        return (capital * tauxMensuel * facteur) / (facteur - 1);
+    }
+
+    double coutTotal() const {
+        return mensualite() * nbMois;
+    }
+};
+
+// ================== Classe Utilisateur ==================
+class Utilisateur {
+private:
+    string nom;
+    string prenom;
+    string banque;
+    double taux;
+    double capital;
+    bool banquePerso;
+
+public:
+    Utilisateur() : taux(0.0), capital(0.0), banquePerso(false) {}
+
+    void saisir() {
+        cout << "Nom : ";
+        cin >> nom;
+        cout << "Prenom : ";
+        cin >> prenom;
+
+        cout << "Capital : ";
+        cin >> capital;
+
+        cout << "Nom de votre banque : ";
+        cin >> banque;
+        cout << "Taux annuel (%) : ";
+        cin >> taux;
+
+        banquePerso = true;
+    }
+
+    double getCapital() const { return capital; }
+    double getTaux() const { return taux; }
+    string getBanque() const { return banque; }
+    bool aUneBanquePerso() const { return banquePerso; }
+
+    void afficher() const {
+        cout << "\nUtilisateur : " << prenom << " " << nom << endl;
+        if (banquePerso)
+            cout << "Banque personnelle : " << banque
+                 << " (" << taux << "%)\n";
+    }
+};
+
+// ================== Séparation du tableau ==================
+void separation(int cols) {
+    cout << "+-----------------";
+    for (int i = 0; i < cols; i++)
+        cout << "+--------------------";
+    cout << "+\n";
+}
+
+// ================== main ==================
+int main() {
+    cout << fixed << setprecision(2);
+
+    string banques[MAX_COLS] = { "BP", "LCL", "CA", "BNP" };
+    int nbBanques = 4;
+
+    int durees[3] = {10, 15, 20};
+    double tauxFixes[2] = {3.0, 4.0};
+
+    Utilisateur user;
+    double capital;
+    char choix;
+
+    cout << "Souhaitez-vous renseigner vos informations ? (o/n) : ";
+    cin >> choix;
+
+    if (choix == 'o' || choix == 'O') {
+        user.saisir();
+        user.afficher();
+
+        capital = user.getCapital();
+        banques[nbBanques++] = user.getBanque();
+    } else {
+        cout << "Capital : ";
+        cin >> capital;
+    }
+
+    double meilleureMensualite = 1e12;
+    string meilleureOffre;
+
+    separation(nbBanques);
+    cout << "| " << setw(15) << " ";
+    for (int i = 0; i < nbBanques; i++)
+        cout << "| " << setw(18) << banques[i];
+    cout << "|\n";
+    separation(nbBanques);
+
+    for (int t = 0; t < 2; t++) {
+        cout << "| Taux " << setw(9) << tauxFixes[t] << "% ";
+        for (int i = 0; i < nbBanques; i++)
+            cout << "| " << setw(18) << " ";
+        cout << "|\n";
+        separation(nbBanques);
+
+        for (int d = 0; d < 3; d++) {
+            cout << "| " << setw(15) << durees[d];
+
+            for (int b = 0; b < nbBanques; b++) {
+                double taux = tauxFixes[t];
+
+                if (b == nbBanques - 1 && user.aUneBanquePerso())
+                    taux = user.getTaux();
+
+                Emprunt e(capital, durees[d], taux);
+                double m = e.mensualite();
+
+                if (m < meilleureMensualite) {
+                    meilleureMensualite = m;
+                    meilleureOffre =
+                        banques[b] + " / " +
+                        to_string(durees[d]) + " ans / " +
+                        to_string(taux) + "%";
+                }
+
+                cout << "| " << setw(18) << m;
+            }
+
+            cout << "|\n";
+            separation(nbBanques);
+        }
+    }
+
+    cout << "\n Meilleure offre detectee : " << meilleureOffre << endl;
+    cout << "Mensualite minimale : " << meilleureMensualite << " €" << endl;
+
+    return 0;
+}
