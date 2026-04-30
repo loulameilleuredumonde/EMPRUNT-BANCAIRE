@@ -6,7 +6,7 @@ using namespace std;
 
 #define MAX_COLS 5
 
-// ================== Classe Emprunt ==================
+//Classe Emprunt
 class Emprunt {
 private:
     double capital;
@@ -32,7 +32,7 @@ public:
     }
 };
 
-// ================== Classe Utilisateur ==================
+//Classe Utilisateur
 class Utilisateur {
 private:
     string nom;
@@ -75,7 +75,7 @@ public:
     }
 };
 
-// ================== Séparation du tableau ==================
+//Affichage tableau
 void separation(int cols) {
     cout << "+-----------------";
     for (int i = 0; i < cols; i++)
@@ -83,17 +83,85 @@ void separation(int cols) {
     cout << "+\n";
 }
 
-// ================== main ==================
-int main() {
-    cout << fixed << setprecision(2);
-
-    string banques[MAX_COLS] = { "BP", "LCL", "CA", "BNP" };
-    int nbBanques = 4;
+//Classe SimulationCredit 
+class SimulationCredit {
+private:
+    string banques[MAX_COLS];
+    int nbBanques;
 
     int durees[3] = {10, 15, 20};
     double tauxFixes[2] = {3.0, 4.0};
 
+public:
+    SimulationCredit() : nbBanques(4) {
+        banques[0] = "BP";
+        banques[1] = "LCL";
+        banques[2] = "CA";
+        banques[3] = "BNP";
+    }
+
+    void ajouterBanqueUtilisateur(const Utilisateur& user) {
+        if (user.aUneBanquePerso())
+            banques[nbBanques++] = user.getBanque();
+    }
+
+    void afficher(double capital, const Utilisateur& user) const {
+        double meilleureMensualite = 1e12;
+        string meilleureOffre;
+
+        separation(nbBanques);
+        cout << "| " << setw(15) << " ";
+        for (int i = 0; i < nbBanques; i++)
+            cout << "| " << setw(18) << banques[i];
+        cout << "|\n";
+        separation(nbBanques);
+
+        for (int t = 0; t < 2; t++) {
+            cout << "| Taux " << setw(9) << tauxFixes[t] << "% ";
+            for (int i = 0; i < nbBanques; i++)
+                cout << "| " << setw(18) << " ";
+            cout << "|\n";
+            separation(nbBanques);
+
+            for (int d = 0; d < 3; d++) {
+                cout << "| " << setw(15) << durees[d];
+
+                for (int b = 0; b < nbBanques; b++) {
+                    double taux = tauxFixes[t];
+
+                    if (b == nbBanques - 1 && user.aUneBanquePerso())
+                        taux = user.getTaux();
+
+                    Emprunt e(capital, durees[d], taux);
+                    double m = e.mensualite();
+
+                    if (m < meilleureMensualite) {
+                        meilleureMensualite = m;
+                        meilleureOffre =
+                            banques[b] + " / " +
+                            to_string(durees[d]) + " ans / " +
+                            to_string(taux) + "%";
+                    }
+
+                    cout << "| " << setw(18) << m;
+                }
+                cout << "|\n";
+                separation(nbBanques);
+            }
+        }
+
+        cout << "\n Meilleure offre detectee : " << meilleureOffre << endl;
+        cout << " Mensualite minimale : " << meilleureMensualite << " €\n";
+    }
+};
+
+// ================== main ==================
+int main() {
+    cout << fixed << setprecision(2);
+
     Utilisateur user;
+    SimulationCredit simulation;
+
     double capital;
     char choix;
 
@@ -103,61 +171,14 @@ int main() {
     if (choix == 'o' || choix == 'O') {
         user.saisir();
         user.afficher();
-
         capital = user.getCapital();
-        banques[nbBanques++] = user.getBanque();
+        simulation.ajouterBanqueUtilisateur(user);
     } else {
         cout << "Capital : ";
         cin >> capital;
     }
 
-    double meilleureMensualite = 1e12;
-    string meilleureOffre;
-
-    separation(nbBanques);
-    cout << "| " << setw(15) << " ";
-    for (int i = 0; i < nbBanques; i++)
-        cout << "| " << setw(18) << banques[i];
-    cout << "|\n";
-    separation(nbBanques);
-
-    for (int t = 0; t < 2; t++) {
-        cout << "| Taux " << setw(9) << tauxFixes[t] << "% ";
-        for (int i = 0; i < nbBanques; i++)
-            cout << "| " << setw(18) << " ";
-        cout << "|\n";
-        separation(nbBanques);
-
-        for (int d = 0; d < 3; d++) {
-            cout << "| " << setw(15) << durees[d];
-
-            for (int b = 0; b < nbBanques; b++) {
-                double taux = tauxFixes[t];
-
-                if (b == nbBanques - 1 && user.aUneBanquePerso())
-                    taux = user.getTaux();
-
-                Emprunt e(capital, durees[d], taux);
-                double m = e.mensualite();
-
-                if (m < meilleureMensualite) {
-                    meilleureMensualite = m;
-                    meilleureOffre =
-                        banques[b] + " / " +
-                        to_string(durees[d]) + " ans / " +
-                        to_string(taux) + "%";
-                }
-
-                cout << "| " << setw(18) << m;
-            }
-
-            cout << "|\n";
-            separation(nbBanques);
-        }
-    }
-
-    cout << "\n Meilleure offre detectee : " << meilleureOffre << endl;
-    cout << "Mensualite minimale : " << meilleureMensualite << " €" << endl;
+    simulation.afficher(capital, user);
 
     return 0;
 }
