@@ -1,0 +1,126 @@
+#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+#define MAX_COLS 5   // 4 banques fixes + 1 banque utilisateur possible
+
+class Emprunt {
+private:
+    double capital;
+    int nbMois;
+    double tauxMensuel;
+
+public:
+    Emprunt(double cap, int duree, double tauxAnnuel) {
+        capital = cap;
+        nbMois = duree * 12;
+        tauxMensuel = (tauxAnnuel / 100) / 12;
+    }
+
+    double calculerMensualite() {
+        double numerateur = capital * tauxMensuel;
+        double denominateur = 1;
+
+        for (int i = 0; i < nbMois; i++)
+            denominateur *= (1 + tauxMensuel);
+
+        return numerateur * (denominateur / (denominateur - 1));
+    }
+};
+
+// Structure utilisateur
+struct Utilisateur {
+    string nom;
+    string prenom;
+    string banque;
+    double taux;
+    double capital;
+};
+
+void separation(int cols) {
+    printf("+-----------------");
+    for (int j = 0; j < cols; j++)
+        printf("+--------------------");
+    printf("+\n");
+}
+
+int main() {
+
+    // Banques par défaut
+    string banques[MAX_COLS] = { "BP", "LCL", "CA", "BNP" };
+    int nbBanques = 4;
+
+    int durees[3] = {10, 15, 20};
+    double tauxFixes[2] = {3.0, 4.0};
+
+    double capital = 0.0;
+    Utilisateur user;
+    char choix;
+
+    // Interaction utilisateur 
+    cout << "Souhaitez-vous renseigner vos informations ? (o/n) : ";
+    cin >> choix;
+
+    if (choix == 'o' || choix == 'O') {
+        cout << "Nom : ";
+        cin >> user.nom;
+        cout << "Prenom : ";
+        cin >> user.prenom;
+
+        cout << "Capital souhaite : ";
+        cin >> user.capital;
+        capital = user.capital;
+
+        cout << "Nom de votre banque : ";
+        cin >> user.banque;
+        cout << "Taux annuel de votre banque (%) : ";
+        cin >> user.taux;
+
+        // Ajout de la banque utilisateur
+        banques[nbBanques] = user.banque;
+        nbBanques++;
+    } else {
+        cout << "Capital : ";
+        cin >> capital;
+    }
+
+    // Affichage du tableau 
+    separation(nbBanques);
+
+    printf("| %-15s ", "");
+    for (int j = 0; j < nbBanques; j++)
+        printf("| %-18s ", banques[j].c_str());
+    printf("|\n");
+
+    separation(nbBanques);
+
+    for (int t = 0; t < 2; t++) {
+
+        printf("| Taux %.0f%%        ", tauxFixes[t]);
+        for (int j = 0; j < nbBanques; j++)
+            printf("| %-18s ", "");
+        printf("|\n");
+        separation(nbBanques);
+
+        for (int d = 0; d < 3; d++) {
+            printf("| %-15d ", durees[d]);
+
+            for (int b = 0; b < nbBanques; b++) {
+
+                double tauxUtilise = tauxFixes[t];
+
+                // Si banque utilisateur : taux personnalisé
+                if (b == nbBanques - 1 && (choix == 'o' || choix == 'O'))
+                    tauxUtilise = user.taux;
+
+                Emprunt e(capital, durees[d], tauxUtilise);
+                printf("| %-18.2f ", e.calculerMensualite());
+            }
+            printf("|\n");
+            separation(nbBanques);
+        }
+    }
+
+    return 0;
+}
