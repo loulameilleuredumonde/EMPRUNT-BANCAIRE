@@ -83,7 +83,7 @@ void separation(int cols) {
     cout << "+\n";
 }
 
-//Classe SimulationCredit 
+//Classe SimulationCredit
 class SimulationCredit {
 private:
     string banques[MAX_COLS];
@@ -107,6 +107,7 @@ public:
 
     void afficher(double capital, const Utilisateur& user) const {
         double meilleureMensualite = 1e12;
+        double meilleurCoutTotal = 0.0;
         string meilleureOffre;
 
         separation(nbBanques);
@@ -137,6 +138,7 @@ public:
 
                     if (m < meilleureMensualite) {
                         meilleureMensualite = m;
+                        meilleurCoutTotal = e.coutTotal();
                         meilleureOffre =
                             banques[b] + " / " +
                             to_string(durees[d]) + " ans / " +
@@ -150,12 +152,16 @@ public:
             }
         }
 
+        double interets = meilleurCoutTotal - capital;
+
         cout << "\n Meilleure offre detectee : " << meilleureOffre << endl;
-        cout << " Mensualite minimale : " << meilleureMensualite << " €\n";
+        cout << " Mensualite minimale : " << meilleureMensualite << " €" << endl;
+        cout << " Interets du pret : " << interets << " €" << endl;
+        cout << " Montant total du pret : " << meilleurCoutTotal << " €" << endl;
     }
 };
 
-// ================== main ==================
+//main
 int main() {
     cout << fixed << setprecision(2);
 
