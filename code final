@@ -1,0 +1,108 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+class Emprunt {
+private:
+    double capital;
+    int nbMois;
+    double tauxMensuel;
+
+public:
+    Emprunt(double cap, int dureeAnnees, double tauxAnnuel)
+        : capital(cap),
+          nbMois(dureeAnnees * 12),
+          tauxMensuel((tauxAnnuel / 100) / 12) {}
+
+    double calculerMensualite() const {
+        if (tauxMensuel == 0) // cas sans intérêt
+            return capital / nbMois;
+
+        double facteur = pow(1 + tauxMensuel, nbMois);
+        return capital * tauxMensuel * facteur / (facteur - 1);
+    }
+};
+
+struct Banque {
+    string nom;
+    double taux;
+};
+
+void afficherSeparateur(int cols) {
+    cout << "+-----------------";
+    for (int i = 0; i < cols; i++)
+        cout << "+--------------------";
+    cout << "+\n";
+}
+
+int main() {
+    vector<Banque> banques = {
+        {"BP", 3.0},
+        {"LCL", 3.0},
+        {"CA", 3.0},
+        {"BNP", 3.0}
+    };
+
+    vector<int> durees = {10, 15, 20};
+    vector<double> tauxTests = {3.0, 4.0};
+
+    double capital;
+    char choix;
+
+    cout << "Souhaitez-vous ajouter votre banque ? (o/n) : ";
+    cin >> choix;
+
+    if (choix == 'o' || choix == 'O') {
+        Banque user;
+        cout << "Nom de votre banque : ";
+        cin >> user.nom;
+
+        cout << "Taux annuel (%) : ";
+        cin >> user.taux;
+
+        banques.push_back(user);
+    }
+
+    cout << "Capital emprunte : ";
+    cin >> capital;
+
+    // Affichage tableau
+    afficherSeparateur(banques.size());
+
+    cout << "| " << setw(15) << "";
+    for (auto &b : banques)
+        cout << "| " << setw(18) << b.nom << " ";
+    cout << "|\n";
+
+    afficherSeparateur(banques.size());
+
+    for (double taux : tauxTests) {
+        cout << "| Taux " << setw(9) << taux << "% ";
+        for (size_t i = 0; i < banques.size(); i++)
+            cout << "| " << setw(18) << "";
+        cout << "|\n";
+
+        afficherSeparateur(banques.size());
+
+        for (int duree : durees) {
+            cout << "| " << setw(15) << duree;
+
+            for (auto &b : banques) {
+                double tauxUtilise = (b.nom == banques.back().nom && (choix == 'o' || choix == 'O'))
+                                     ? b.taux
+                                     : taux;
+
+                Emprunt e(capital, duree, tauxUtilise);
+                cout << "| " << setw(18) << fixed << setprecision(2)
+                     << e.calculerMensualite() << " ";
+            }
+
+            cout << "|\n";
+            afficherSeparateur(banques.size());
+        }
+    }
+
+    return 0;
+}
