@@ -1,8 +1,8 @@
-# EMPRUNT-BANCAIRE
- Compte rendu – Simulation de crédit en C++
+# EMPRUNT BANCAIRE
+ Compte rendu Simulation de crédit en C++
 
 
-Dans le cadre de ce projet, nous avons développé un programme en langage C++ permettant de simuler un crédit immobilier. L’objectif principal était de comparer différentes offres bancaires en fonction d’un capital emprunté, de plusieurs durées et de taux d’intérêt, afin d’identifier la meilleure solution pour l’utilisateur.
+Dans le cadre de ce projet, nous avons développé un programme en langage C++ permettant de simuler un crédit immobilier. L’objectif principal était de comparer différentes offres bancaires en fonction d’un capital emprunté, de plusieurs durées et de taux d’intérêt afin d’identifier la meilleure solution pour l’utilisateur.
 
 Ce projet nous a également permis de mettre en pratique les concepts fondamentaux de la programmation orientée objet (POO), ainsi que la gestion des entrées/sorties et l’organisation d’un programme structuré. Enfin, nous avons utilisé GitHub pour gérer les versions du projet et faciliter le travail collaboratif.
 
@@ -99,7 +99,5 @@ L’utilisateur peut ainsi prendre une décision éclairée en fonction des diff
  Conclusion
 
 Ce projet nous a permis de consolider nos compétences en C++, notamment en programmation orientée objet et en structuration du code. Nous avons également appris à corriger des erreurs, optimiser les calculs et améliorer la lisibilité du programme.
-
 L’utilisation de GitHub a été un véritable atout pour la gestion du projet, en apportant rigueur et organisation.
-
 Enfin, ce travail nous a permis de mieux comprendre le fonctionnement des crédits et des taux d’intérêt, tout en développant un outil pratique et fonctionnel.
